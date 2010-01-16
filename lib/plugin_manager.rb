@@ -37,19 +37,24 @@ class PluginManager
   end
   
   def load
-    while @unloaded_plugins.any?
+    previous_length = @unloaded_plugins.length + 1
+    while previous_length > @unloaded_plugins.length
+      previous_length = @unloaded_plugins.length
       next_to_load = @unloaded_plugins.detect do |d|
         (d.dependencies||[]).all? do |dep|
           @loaded_plugins.detect {|d1| d1.name == dep.first }
         end
       end
-      begin
-        require File.join(File.dirname(next_to_load.definition_file), next_to_load.file)
-      rescue Object
-        @plugins_with_errors << next_to_load
+      if next_to_load
+        begin
+          require File.join(File.dirname(next_to_load.definition_file), next_to_load.file)
+        rescue Object
+          @plugins_with_errors << next_to_load
+        end
+        @loaded_plugins << next_to_load
+        @unloaded_plugins.delete(next_to_load)
       end
-      @loaded_plugins << next_to_load
-      @unloaded_plugins.delete(next_to_load)
     end
   end
 end
+

@@ -65,4 +65,18 @@ describe PluginManager do
       @manager.plugins_with_errors.first.name.should == "Core"
     end
   end
+  
+  describe "loading plugins with unmet dependencies" do
+    before do
+      @manager = PluginManager.new
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures unmet_dependencies1)))
+    end
+    
+    it "should load the rest of the plugins ok" do
+      @manager.load
+      @manager.loaded_plugins.map {|pl| pl.name }.should == ["Core"]
+    end
+  end
 end
+
+
