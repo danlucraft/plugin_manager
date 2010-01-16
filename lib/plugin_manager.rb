@@ -48,6 +48,7 @@ class PluginManager
       if plugin = next_to_load
         begin
           plugin.load
+          @loaded_plugins << plugin
         rescue Object => e
           if ENV["PLUGIN_DEBUG"]
             puts "Error loading plugin: #{plugin.inspect}"
@@ -56,7 +57,6 @@ class PluginManager
           end
           @plugins_with_errors << plugin
         end
-        @loaded_plugins << plugin
         @unloaded_plugins.delete(plugin)
       end
     end
