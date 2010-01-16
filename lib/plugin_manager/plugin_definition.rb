@@ -6,6 +6,10 @@ class PluginManager
                   :object,
                   :file,
                   :dependencies,
-                  :containing_directory
+                  :definition_file
+                  
+    def inspect
+      "<Plugin #{name} #{version} depends:[#{(dependencies||[]).map{|dep| dep.join("")}.join(", ")}]>"
+    end
   end
 end

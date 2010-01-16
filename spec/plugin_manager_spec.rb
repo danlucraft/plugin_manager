@@ -9,14 +9,14 @@ describe PluginManager do
     end
     
     it "should find plugin files inside the source" do
-      @manager.plugin_definition_files.map do |f| 
-        f[/example\/(.*)\/plugin.rb/, 1]
+      @manager.plugins.map do |f| 
+        f.definition_file[/example\/(.*)\/plugin.rb/, 1]
       end.sort.should == %w(core debug extras)
     end
     
     it "should load the plugin definitions" do
-      @manager.plugin_definitions.length.should == 3
-      @manager.plugin_definitions.map {|d| d.name }.should == %w(Core Debug Extras)
+      @manager.plugins.length.should == 3
+      @manager.plugins.map {|d| d.name }.should == %w(Core Debug Extras)
     end
   end
   
@@ -27,7 +27,7 @@ describe PluginManager do
     end
     
     it "should not die when loading the definition" do
-      @manager.plugin_definitions
+      @manager.plugins
     end
   end
   
