@@ -6,12 +6,13 @@ require 'plugin_manager/plugin_definition'
 require 'plugin_manager/definition_builder'
 
 class PluginManager
-  attr_reader :unreadable_definitions
+  attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins
 
   def initialize
     @unloaded_plugins = []
     @loaded_plugins = []
     @unreadable_definitions = []
+    @plugins_with_errors = []
   end
 
   def plugins
@@ -45,6 +46,7 @@ class PluginManager
       begin
         require File.join(File.dirname(next_to_load.definition_file), next_to_load.file)
       rescue Object
+        @plugins_with_errors << next_to_load
       end
       @loaded_plugins << next_to_load
       @unloaded_plugins.delete(next_to_load)

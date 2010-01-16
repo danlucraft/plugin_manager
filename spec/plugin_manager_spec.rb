@@ -58,5 +58,11 @@ describe PluginManager do
     it "should not die when loading plugins" do
       @manager.load
     end
+    
+    it "should report them as having errors" do
+      @manager.load
+      @manager.plugins_with_errors.length.should == 1
+      @manager.plugins_with_errors.first.name.should == "Core"
+    end
   end
 end
