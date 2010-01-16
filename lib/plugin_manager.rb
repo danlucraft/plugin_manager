@@ -6,7 +6,7 @@ require 'plugin_manager/plugin_definition'
 require 'plugin_manager/definition_builder'
 
 class PluginManager
-  attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins
+  attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins, :unloaded_plugins
 
   def initialize
     @unloaded_plugins = []
@@ -29,11 +29,9 @@ class PluginManager
           definition.definition_file = File.expand_path(file)
           definition
         rescue Object => e
-          if ENV["PLUGIN_DEBUG"]
-            puts "Unreadable plugin definition: #{file}"
-            puts "  " + e.message
-            puts e.backtrace.map {|l| "  " + l }
-          end
+          puts "Unreadable plugin definition: #{file}"
+          puts "  " + e.message
+          puts e.backtrace.map {|l| "  " + l }
           @unreadable_definitions << file
           nil
         end
@@ -50,11 +48,9 @@ class PluginManager
           plugin.load
           @loaded_plugins << plugin
         rescue Object => e
-          if ENV["PLUGIN_DEBUG"]
-            puts "Error loading plugin: #{plugin.inspect}"
-            puts "  " + e.message
-            puts e.backtrace.map {|l| "  " + l }
-          end
+          puts "Error loading plugin: #{plugin.inspect}"
+          puts "  " + e.message
+          puts e.backtrace.map {|l| "  " + l }
           @plugins_with_errors << plugin
         end
         @unloaded_plugins.delete(plugin)
