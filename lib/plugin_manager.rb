@@ -41,24 +41,36 @@ class PluginManager
     previous_length = @unloaded_plugins.length + 1
     while previous_length > @unloaded_plugins.length
       previous_length = @unloaded_plugins.length
-      next_to_load = @unloaded_plugins.detect do |d|
-        (d.dependencies||[]).all? do |dep|
-          @loaded_plugins.detect {|d1| d1.name == dep.first }
-        end
-      end
-      if next_to_load
+      if plugin = next_to_load
         begin
-          next_to_load.load
+          plugin.load
         rescue Object => e
-          puts "Error loading plugin: #{next_to_load}"
+          puts "Error loading plugin: #{plugin}"
           puts "  " + e.message
           puts e.backtrace.map {|l| "  " + l }
-          @plugins_with_errors << next_to_load
+          @plugins_with_errors << plugin
         end
-        @loaded_plugins << next_to_load
-        @unloaded_plugins.delete(next_to_load)
+        @loaded_plugins << plugin
+        @unloaded_plugins.delete(plugin)
+      end
+    end
+  end
+  
+  private
+  
+  def next_to_load
+    # this ordering ensures we try the most recent version of a plugin first
+    remaining_plugins = @unloaded_plugins.sort_by do |pl|
+      [pl.name, pl.version]
+    end.reverse
+    
+    remaining_plugins.detect do |d|
+      next if @loaded_plugins.map {|pl| pl.name }.include?(d.name)
+      (d.dependencies||[]).all? do |dep|
+        @loaded_plugins.detect {|d1| d1.name == dep.first }
       end
     end
   end
 end
+
 

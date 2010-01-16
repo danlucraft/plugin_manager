@@ -108,6 +108,22 @@ describe PluginManager do
       App.times_loaded.should == 2
     end
   end
+  
+  describe "loading when there are multiple versions" do
+    before do
+      @manager = PluginManager.new
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures two_versions1)))
+      @manager.load
+    end
+    
+    it "should only load one version" do
+      @manager.loaded_plugins.length.should == 1
+    end
+    
+    it "should load the most recent version" do
+      @manager.loaded_plugins.first.version.should == "2.0"
+    end
+  end
 end
 
 
