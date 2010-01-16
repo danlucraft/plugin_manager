@@ -2,7 +2,7 @@
 Plugin Manager
 ==============
 
-This is a simple plugin loader. Features:
+This is a plugin loader for Ruby. Features:
 
   * dependencies
   * versioning
