@@ -42,7 +42,10 @@ class PluginManager
           @loaded_plugins.detect {|d1| d1.name == dep.first }
         end
       end
-      require File.join(next_to_load.containing_directory, next_to_load.file)
+      begin
+        require File.join(next_to_load.containing_directory, next_to_load.file)
+      rescue Object
+      end
       @loaded_plugins << next_to_load
       all_plugins.delete(next_to_load)
     end

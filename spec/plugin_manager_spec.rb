@@ -42,4 +42,15 @@ describe PluginManager do
       App.plugins.should == [:core, :extras, :debug]
     end
   end
+  
+  describe "loading plugins with errors in them" do
+    before do
+      @manager = PluginManager.new
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures error_in_plugin)))
+    end
+    
+    it "should not die when loading plugins" do
+      @manager.load
+    end
+  end
 end
