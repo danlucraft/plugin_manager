@@ -8,6 +8,7 @@ require 'plugin_manager/definition_builder'
 class PluginManager
   def initialize
     @plugin_sources = []
+    @loaded_plugins = []
   end
 
   def add_plugin_source(directory)
@@ -21,8 +22,29 @@ class PluginManager
   end
   
   def plugin_definitions
-    plugin_definition_files.map do |file|
-      instance_eval(File.read(file))
+    @plugin_definitions ||= begin
+      plugin_definition_files.map do |file|
+        begin
+          definition = instance_eval(File.read(file))
+          definition.containing_directory = File.dirname(file)
+          definition
+        rescue Object
+        end
+      end.compact.sort_by {|p| p.name.downcase }
+    end
+  end
+  
+  def load
+    all_plugins = plugin_definitions
+    while all_plugins.any?
+      next_to_load = all_plugins.detect do |d|
+        (d.dependencies||[]).all? do |dep|
+          @loaded_plugins.detect {|d1| d1.name == dep.first }
+        end
+      end
+      require File.join(next_to_load.containing_directory, next_to_load.file)
+      @loaded_plugins << next_to_load
+      all_plugins.delete(next_to_load)
     end
   end
 end

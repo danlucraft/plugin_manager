@@ -5,6 +5,7 @@ class PluginManager
                   :version,
                   :object,
                   :file,
-                  :dependencies
+                  :dependencies,
+                  :containing_directory
   end
 end

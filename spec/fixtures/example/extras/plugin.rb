@@ -1,14 +1,8 @@
 
 Plugin.define do
   name         "Extras"
-#  version      "1.0"
-#  object       "App::Core"
-#  file          File.join(File.dirname(__FILE__), %w(core)
-#  dependencies "redcar", ">=1.0"
-  
-#  author       "Daniel Lucraft"
-#  description f=<<-TEXT
-#    A repl that runs within the Redcar process, letting users
-#    explore Redcar APIs.
-#  TEXT
+  version      "1.0"
+  object       "App::Extras"
+  file          File.join(File.dirname(__FILE__), %w(extras))
+  dependencies "Core", ">=1.0"
 end
