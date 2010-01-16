@@ -6,9 +6,12 @@ require 'plugin_manager/plugin_definition'
 require 'plugin_manager/definition_builder'
 
 class PluginManager
+  attr_reader :unreadable_definitions
+
   def initialize
     @unloaded_plugins = []
     @loaded_plugins = []
+    @unreadable_definitions = []
   end
 
   def plugins
@@ -25,6 +28,8 @@ class PluginManager
           definition.definition_file = File.expand_path(file)
           definition
         rescue Object
+          @unreadable_definitions << file
+          nil
         end
       end.compact.sort_by {|p| p.name.downcase }
     @unloaded_plugins += new_definitions

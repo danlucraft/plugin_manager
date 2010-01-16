@@ -27,7 +27,13 @@ describe PluginManager do
     end
     
     it "should not die when loading the definition" do
-      @manager.plugins
+      @manager.plugins.length.should == 0
+    end
+    
+    it "should report it as an error" do
+      @manager.unreadable_definitions.length.should == 1
+      @manager.unreadable_definitions.first.should == 
+        File.expand_path(File.join(File.dirname(__FILE__), %w(fixtures error_in_definition core plugin.rb)))
     end
   end
   
