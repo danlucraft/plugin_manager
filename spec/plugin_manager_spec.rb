@@ -84,10 +84,22 @@ describe PluginManager do
     end
   end
   
-  describe "loading plugins with unmet dependencies" do
+  describe "loading plugins with unmet dependencies because the plugin is missing" do
     before do
       @manager = PluginManager.new
       @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures unmet_dependencies1)))
+    end
+    
+    it "should load the rest of the plugins ok" do
+      @manager.load
+      @manager.loaded_plugins.map {|pl| pl.name }.should == ["Core"]
+    end
+  end
+
+  describe "loading plugins with unmet dependencies because the plugin is not recent enough" do
+    before do
+      @manager = PluginManager.new
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures unmet_dependencies2)))
     end
     
     it "should load the rest of the plugins ok" do
@@ -141,7 +153,54 @@ describe PluginManager do
     end
   end
     
+  describe "version comparison" do
+    it "should return true if it is equal" do
+      PluginManager.compare_version("=1.0", "1.0").should be_true
+    end
+    
+    it "should return false if it is not equal" do
+      PluginManager.compare_version("=2.0", "1.0").should be_false
+    end
+    
+    it "should return true if it is bigger than" do
+      PluginManager.compare_version(">1.0", "2.0").should be_true
+    end
+    
+    it "should return false if it is bigger than and not valid" do
+      PluginManager.compare_version(">1.0", "0.5").should be_false
+    end
+    
+    it "should return true if it is bigger than or equal to" do
+      PluginManager.compare_version(">=1.0", "2.0").should be_true
+      PluginManager.compare_version(">=1.0", "1.0").should be_true
+      PluginManager.compare_version(">=1.0", "0.5").should be_false
+    end
+    
+    it "should match against multiple requirements" do
+      PluginManager.compare_version(">=1.0, <3.0", "2.0").should be_true
+      PluginManager.compare_version(">1.0, <=3.0", "5.0").should be_false
+      PluginManager.compare_version(">1.0, <3.0", "0.5").should be_false
+    end
+    
+    it "should match not equal requirements" do
+      PluginManager.compare_version("!=1.0", "2.0").should be_true
+      PluginManager.compare_version("!=1.0", "0.999").should be_true
+      PluginManager.compare_version("!=1.0", "1.0").should be_false
+    end
+    
+    it "should not care about trailing 0s" do
+      PluginManager.compare_version("=1.0", "1.0.0").should be_true
+      PluginManager.compare_version("!=1.0", "1.0.0").should be_false
+      PluginManager.compare_version("=1.0.0", "1.0").should be_true
+      PluginManager.compare_version("!=1.0.0", "1.0").should be_false
+      PluginManager.compare_version("=2.0.1.0", "2.0.1.0.0.0").should be_true
+    end
+  end
 end
+
+
+
+
 
 
 

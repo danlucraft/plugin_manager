@@ -26,11 +26,13 @@ inside that looks like this:
       
       # Dependencies of the plugin
       dependencies "core", ">=1.0",
-                   "fonts", ">=0.5 <1.9",
-                   "debug", ">0"
+                   "fonts", ">=0.5, <1.9",
+                   "debug", ">0, !=0.95, < 2"
     end
 
-See the spec/fixtures/example/ directory for an example of a set of plugins. This
+See the spec/fixtures/example/ directory for an example of a set of plugins.
+
+This
 directory of plugins can be loaded with:
 
     manager = PluginManager.new

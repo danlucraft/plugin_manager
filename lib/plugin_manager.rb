@@ -65,7 +65,37 @@ class PluginManager
     remaining_plugins.detect do |d|
       next if @loaded_plugins.map {|pl| pl.name }.include?(d.name)
       (d.dependencies||[]).all? do |dep|
-        @loaded_plugins.detect {|d1| d1.name == dep.first }
+        req_name, req_ver = *dep
+        @loaded_plugins.detect do |d1| 
+          d1.name == req_name and 
+            PluginManager.compare_version(req_ver, d1.version)
+        end
+      end
+    end
+  end
+  
+  def self.compare_version(required, got)
+    got = got.gsub(/(\.0)+$/, "")
+    required.split(",").all? do |req|
+      req = req.strip
+      req = req.gsub(/(\.0)+$/, "")
+      if md = req.match(/^(=|>|>=|<|<=|!=)?([\d\.]*)$/)
+        case md[1]
+        when ">"
+          got > md[2]
+        when ">="
+          got >= md[2]
+        when "<"
+          got < md[2]
+        when "<="
+          got <= md[2]
+        when "="
+          md[2] == got
+        when "!="
+          md[2] != got
+        end
+      else
+        puts "don't recognize version string: #{required.inspect}"
       end
     end
   end
