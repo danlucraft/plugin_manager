@@ -4,6 +4,9 @@ require File.join(File.dirname(__FILE__), "spec_helper")
 describe PluginManager do
   before do
     @before_files = $".clone
+    if defined?(App)
+      App.times_loaded = 0
+    end
   end
   
   after do
@@ -92,6 +95,22 @@ describe PluginManager do
       @manager.loaded_plugins.map {|pl| pl.name }.should == ["Core"]
     end
   end
+  
+  describe "reloading plugins" do
+    before do
+      @manager = PluginManager.new
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures example)))
+      @manager.load
+    end
+    
+    it "should actually reload the code" do
+      @manager.loaded_plugins.find {|pl| pl.name == "Core"}.load
+      App.times_loaded.should == 2
+    end
+  end
 end
+
+
+
 
 

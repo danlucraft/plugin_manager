@@ -29,6 +29,7 @@ class PluginManager
           definition.definition_file = File.expand_path(file)
           definition
         rescue Object
+          puts "Unreadable plugin definition: #{file}"
           @unreadable_definitions << file
           nil
         end
@@ -49,6 +50,9 @@ class PluginManager
         begin
           next_to_load.load
         rescue Object => e
+          puts "Error loading plugin: #{next_to_load}"
+          puts "  " + e.message
+          puts e.backtrace.map {|l| "  " + l }
           @plugins_with_errors << next_to_load
         end
         @loaded_plugins << next_to_load
