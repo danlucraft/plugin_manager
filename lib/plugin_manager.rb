@@ -47,14 +47,25 @@ class PluginManager
       end
       if next_to_load
         begin
-          require File.join(File.dirname(next_to_load.definition_file), next_to_load.file)
-        rescue Object
+          new_files = log_requires do
+            require File.expand_path(File.join(File.dirname(next_to_load.definition_file), next_to_load.file))
+          end
+          next_to_load.required_files.unshift(*new_files)
+        rescue Object => e
           @plugins_with_errors << next_to_load
         end
         @loaded_plugins << next_to_load
         @unloaded_plugins.delete(next_to_load)
       end
     end
+  end
+  
+  def log_requires
+    before = $".dup 
+    yield
+    after = $".dup
+    result = after - before
+    result
   end
 end
 

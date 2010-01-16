@@ -2,6 +2,17 @@
 require File.join(File.dirname(__FILE__), "spec_helper")
 
 describe PluginManager do
+  before do
+    @before_files = $".clone
+  end
+  
+  after do
+    added_files = $".clone - @before_files
+    added_files.each do |file|
+      $".delete(file)
+    end
+  end
+  
   describe "loading plugin definitions" do
     before do
       @manager = PluginManager.new
@@ -44,8 +55,12 @@ describe PluginManager do
       @manager.load
     end
     
-    it "should load the plugins respecting dependencies" do
+    it "should load the plugins in dependency order" do
       App.plugins.should == [:core, :extras, :debug]
+    end
+    
+    it "should record the files that were loaded" do
+      @manager.plugins.find {|pl| pl.name == "Core"}.required_files.length.should == 1
     end
   end
   
