@@ -20,11 +20,11 @@ class PluginManager
     end
     
     def object(value)
-      @definition.object = value
+      @definition.object_string = value
     end
     
-    def file(value)
-      @definition.file = value
+    def file(*values)
+      @definition.file = values
     end
     
     def dependencies(*deps)

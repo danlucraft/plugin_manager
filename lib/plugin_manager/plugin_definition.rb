@@ -3,13 +3,17 @@ class PluginManager
   class PluginDefinition
     attr_accessor :name,
                   :version,
-                  :object,
+                  :object_string,
                   :file,
                   :dependencies,
                   :definition_file
                   
-    def inspect
+    def inspect1              
       "<Plugin #{name} #{version} depends:[#{(dependencies||[]).map{|dep| dep.join("")}.join(", ")}] #{required_files.length} files>"
+    end
+    
+    def inspect
+      inspect1
     end
     
     def required_files
@@ -18,10 +22,19 @@ class PluginManager
     
     def load
       required_files.each {|file| $".delete(file) }
+      load_file = File.expand_path(File.join(File.dirname(definition_file), file))
+      $:.unshift(File.dirname(load_file))
       new_files = log_requires do
-        require File.expand_path(File.join(File.dirname(definition_file), file))
+        require load_file
       end
       required_files.unshift(*new_files)
+      if object.respond_to?(:loaded)
+        object.loaded
+      end
+    end
+    
+    def object
+      eval(object_string)
     end
     
     private

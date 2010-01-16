@@ -28,8 +28,12 @@ class PluginManager
           definition = instance_eval(File.read(file))
           definition.definition_file = File.expand_path(file)
           definition
-        rescue Object
-          puts "Unreadable plugin definition: #{file}"
+        rescue Object => e
+          if ENV["PLUGIN_DEBUG"]
+            puts "Unreadable plugin definition: #{file}"
+            puts "  " + e.message
+            puts e.backtrace.map {|l| "  " + l }
+          end
           @unreadable_definitions << file
           nil
         end
@@ -45,9 +49,11 @@ class PluginManager
         begin
           plugin.load
         rescue Object => e
-          puts "Error loading plugin: #{plugin}"
-          puts "  " + e.message
-          puts e.backtrace.map {|l| "  " + l }
+          if ENV["PLUGIN_DEBUG"]
+            puts "Error loading plugin: #{plugin.inspect}"
+            puts "  " + e.message
+            puts e.backtrace.map {|l| "  " + l }
+          end
           @plugins_with_errors << plugin
         end
         @loaded_plugins << plugin
