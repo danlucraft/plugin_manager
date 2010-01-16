@@ -60,9 +60,7 @@ class PluginManager
   
   def next_to_load
     # this ordering ensures we try the most recent version of a plugin first
-    remaining_plugins = @unloaded_plugins.sort_by do |pl|
-      [pl.name, pl.version]
-    end.reverse
+    remaining_plugins = @unloaded_plugins.sort_by {|pl| pl.version }.reverse
     
     remaining_plugins.detect do |d|
       next if @loaded_plugins.map {|pl| pl.name }.include?(d.name)
