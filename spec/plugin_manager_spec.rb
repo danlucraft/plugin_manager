@@ -124,6 +124,23 @@ describe PluginManager do
       @manager.loaded_plugins.first.version.should == "2.0"
     end
   end
+  
+  describe "loading when there are multiple versions and the most recent has unmet deps" do
+    before do
+      @manager = PluginManager.new
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures two_versions2)))
+      @manager.load
+    end
+     
+    it "should only load one version" do
+      @manager.loaded_plugins.length.should == 1
+    end
+    
+    it "should load the most recent version with met dependencies" do
+      @manager.loaded_plugins.first.version.should == "1.0"
+    end
+  end
+    
 end
 
 
