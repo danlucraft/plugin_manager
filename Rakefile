@@ -12,8 +12,6 @@ end
 task :default => ["spec"]
 
 spec = Gem::Specification.new do |s|
-
-  # Change these as appropriate
   s.name              = "plugin_manager"
   s.version           = "1"
   s.summary           = "A Ruby plugin loader"
@@ -25,12 +23,10 @@ spec = Gem::Specification.new do |s|
   s.extra_rdoc_files  = %w(README.md)
   s.rdoc_options      = %w(--main README.md)
 
-  # Add any extra files to include in the gem
   s.files             = %w(README.md) + Dir.glob("{bin,spec,lib/**/*}")
   s.executables       = FileList["bin/**"].map { |f| File.basename(f) }
   s.require_paths     = ["lib"]
 
-  # If your tests use any gems, include them here
   s.add_development_dependency("rspec")
 end
 
