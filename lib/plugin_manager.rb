@@ -45,6 +45,7 @@ class PluginManager
       previous_length = @unloaded_plugins.length
       if plugin = next_to_load
         begin
+          puts "[PluginManager] loading #{plugin.name}" if ENV["PLUGIN_DEBUG"]
           plugin.load
           @loaded_plugins << plugin
         rescue Object => e
