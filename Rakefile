@@ -13,7 +13,7 @@ task :default => ["spec"]
 
 spec = Gem::Specification.new do |s|
   s.name              = "plugin_manager"
-  s.version           = "1"
+  s.version           = "1.1"
   s.summary           = "A Ruby plugin loader"
   s.author            = "Daniel Lucraft"
   s.email             = "dan@fluentradical.com"
