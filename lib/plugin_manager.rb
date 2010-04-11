@@ -18,6 +18,14 @@ class PluginManager
   def plugins
     @unloaded_plugins + @loaded_plugins
   end
+  
+  def plugin_objects
+    @loaded_plugins.map {|definition| definition.object}
+  end
+  
+  def objects_implementing(method_name)
+    plugin_objects.select {|obj| obj.respond_to?(method_name) }
+  end
 
   def add_plugin_source(directory)
     definition_files = Dir[File.join(File.expand_path(directory), "*", "plugin.rb")]
