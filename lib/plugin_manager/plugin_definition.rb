@@ -20,7 +20,12 @@ class PluginManager
       @required_files ||= []
     end
     
+    def load_time
+      @load_time
+    end
+    
     def load
+      s = Time.now
       required_files.each {|file| $".delete(file) }
       load_file = File.expand_path(File.join(File.dirname(definition_file), file))
       $:.unshift(File.dirname(load_file))
@@ -31,6 +36,7 @@ class PluginManager
       if object.respond_to?(:loaded)
         object.loaded
       end
+      @load_time = Time.now - s
     end
     
     def object

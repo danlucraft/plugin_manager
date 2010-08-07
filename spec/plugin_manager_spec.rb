@@ -65,6 +65,10 @@ describe PluginManager do
     it "should record the files that were loaded" do
       @manager.plugins.find {|pl| pl.name == "Core"}.required_files.length.should == 1
     end
+    
+    it "should record the time taken to load the plugin" do
+      @manager.plugins.find {|pl| pl.name == "Core"}.load_time.should be_an_instance_of(Float)
+    end
   end
   
   describe "loading plugins with errors in them" do
