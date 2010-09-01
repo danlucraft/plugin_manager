@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__))
 require 'plugin_manager/plugin'
 require 'plugin_manager/plugin_definition'
 require 'plugin_manager/definition_builder'
+require 'plugin_manager/resource_installer'
 
 class PluginManager
   attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins, :unloaded_plugins

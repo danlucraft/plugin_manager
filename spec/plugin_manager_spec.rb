@@ -19,7 +19,7 @@ describe PluginManager do
   describe "loading plugin definitions" do
     before do
       @manager = PluginManager.new
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures example)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading example)))
     end
     
     it "should find plugin files inside the source" do
@@ -37,7 +37,7 @@ describe PluginManager do
   describe "loading plugin definitions with syntax errors in them" do
     before do
       @manager = PluginManager.new(StringIO.new)
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures error_in_definition)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading error_in_definition)))
     end
     
     it "should not die when loading the definition" do
@@ -47,14 +47,14 @@ describe PluginManager do
     it "should report it as an error" do
       @manager.unreadable_definitions.length.should == 1
       @manager.unreadable_definitions.first.should == 
-        File.expand_path(File.join(File.dirname(__FILE__), %w(fixtures error_in_definition core plugin.rb)))
+        File.expand_path(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading error_in_definition core plugin.rb)))
     end
   end
   
   describe "loading plugins" do
     before do
       @manager = PluginManager.new
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures example)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading example)))
       @manager.load
     end
     
@@ -74,7 +74,7 @@ describe PluginManager do
   describe "loading plugins with errors in them" do
     before do
       @manager = PluginManager.new(StringIO.new)
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures error_in_plugin)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading error_in_plugin)))
     end
     
     it "should not die when loading plugins" do
@@ -91,7 +91,7 @@ describe PluginManager do
   describe "loading plugins with unmet dependencies because the plugin is missing" do
     before do
       @manager = PluginManager.new
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures unmet_dependencies1)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading unmet_dependencies1)))
     end
     
     it "should load the rest of the plugins ok" do
@@ -103,7 +103,7 @@ describe PluginManager do
   describe "loading plugins with unmet dependencies because the plugin is not recent enough" do
     before do
       @manager = PluginManager.new
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures unmet_dependencies2)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading unmet_dependencies2)))
     end
     
     it "should load the rest of the plugins ok" do
@@ -115,7 +115,7 @@ describe PluginManager do
   describe "reloading plugins" do
     before do
       @manager = PluginManager.new
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures example)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading example)))
       @manager.load
     end
     
@@ -128,7 +128,7 @@ describe PluginManager do
   describe "loading when there are multiple versions" do
     before do
       @manager = PluginManager.new
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures two_versions1)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading two_versions1)))
       @manager.load
     end
     
@@ -144,7 +144,7 @@ describe PluginManager do
   describe "loading when there are multiple versions and the most recent has unmet deps" do
     before do
       @manager = PluginManager.new
-      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures two_versions2)))
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading two_versions2)))
       @manager.load
     end
      
