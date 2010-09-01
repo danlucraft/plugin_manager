@@ -7,7 +7,7 @@ require 'plugin_manager/definition_builder'
 require 'plugin_manager/resource_installer'
 
 class PluginManager
-  attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins, :unloaded_plugins
+  attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins, :unloaded_plugins, :output
 
   def initialize(output = STDOUT)
     @unloaded_plugins = []
@@ -67,6 +67,19 @@ class PluginManager
         @unloaded_plugins.delete(plugin)
       end
     end
+  end
+  
+  def install_to(dir)
+    @install_dir = dir
+    resource_installer.install_to(@install_dir)
+  end
+  
+  def resource_dir(plugin_definition)
+    resource_installer.resource_dir(@install_dir, plugin_definition)
+  end
+    
+  def resource_installer
+    @resource_installer ||= ResourceInstaller.new(self)
   end
   
   private
