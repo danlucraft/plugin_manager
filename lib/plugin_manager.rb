@@ -8,11 +8,12 @@ require 'plugin_manager/definition_builder'
 class PluginManager
   attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins, :unloaded_plugins
 
-  def initialize
+  def initialize(output = STDOUT)
     @unloaded_plugins = []
     @loaded_plugins = []
     @unreadable_definitions = []
     @plugins_with_errors = []
+    @output = output
   end
 
   def plugins
@@ -37,9 +38,9 @@ class PluginManager
           definition.definition_file = File.expand_path(file)
           definition
         rescue Object => e
-          puts "Unreadable plugin definition: #{file}"
-          puts "  " + e.message
-          puts e.backtrace.map {|l| "  " + l }
+          @output.puts "Unreadable plugin definition: #{file}"
+          @output.puts "  " + e.message
+          @output.puts e.backtrace.map {|l| "  " + l }
           @unreadable_definitions << file
           nil
         end
@@ -53,13 +54,13 @@ class PluginManager
       previous_length = @unloaded_plugins.length
       if plugin = next_to_load
         begin
-          puts "[PluginManager] loading #{plugin.name}" if ENV["PLUGIN_DEBUG"]
+          @output.puts "[PluginManager] loading #{plugin.name}" if ENV["PLUGIN_DEBUG"]
           plugin.load
           @loaded_plugins << plugin
         rescue Object => e
-          puts "Error loading plugin: #{plugin.inspect}"
-          puts "  " + e.message
-          puts e.backtrace.map {|l| "  " + l }
+          @output.puts "Error loading plugin: #{plugin.inspect}"
+          @output.puts "  " + e.message
+          @output.puts e.backtrace.map {|l| "  " + l }
           @plugins_with_errors << plugin
         end
         @unloaded_plugins.delete(plugin)
@@ -106,7 +107,7 @@ class PluginManager
           md[2] != got
         end
       else
-        puts "don't recognize version string: #{required.inspect}"
+        @output.puts "don't recognize version string: #{required.inspect}"
       end
     end
   end

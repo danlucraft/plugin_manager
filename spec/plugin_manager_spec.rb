@@ -36,7 +36,7 @@ describe PluginManager do
   
   describe "loading plugin definitions with syntax errors in them" do
     before do
-      @manager = PluginManager.new
+      @manager = PluginManager.new(StringIO.new)
       @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures error_in_definition)))
     end
     
@@ -73,7 +73,7 @@ describe PluginManager do
   
   describe "loading plugins with errors in them" do
     before do
-      @manager = PluginManager.new
+      @manager = PluginManager.new(StringIO.new)
       @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures error_in_plugin)))
     end
     
