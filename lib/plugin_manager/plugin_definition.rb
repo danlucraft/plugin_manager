@@ -26,7 +26,7 @@ class PluginManager
     end
     
     def load_time
-      @load_time
+      @load_time ||= -1
     end
     
     def load
