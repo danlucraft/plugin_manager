@@ -58,8 +58,13 @@ describe PluginManager::ResourceInstaller do
     
     it "should let you specify resources with a resource prefix (an asset_host)" do
       @manager.install_to(tmp_dir)
-      prefixed_resource_path = tmp_dir + "/with-prefix/google.html"
-      File.exist?(prefixed_resource_path).should be_true
+      File.exist?(tmp_dir + "/with-prefix/google.html").should be_true
+    end
+    
+    it "should let you specify multiple resources to install" do
+      @manager.install_to(tmp_dir)
+      File.exist?(tmp_dir + "/multiple-installs/google-ca.html").should be_true
+      File.exist?(tmp_dir + "/multiple-installs/google-uk.html").should be_true
     end
   end
 
