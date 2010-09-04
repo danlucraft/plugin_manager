@@ -10,11 +10,11 @@ describe PluginManager::ResourceInstaller do
     attr_reader :get_count
     
     def initialize
-      @get_count = 0
+      @get_count = Hash.new {|h, k| h[k] = 0 }
     end
     
-    def get(*_)
-      @get_count += 1
+    def get(uri)
+      @get_count[uri.to_s] += 1
       "Fake File"
     end
   end
@@ -48,13 +48,18 @@ describe PluginManager::ResourceInstaller do
 
       @manager.install_to(tmp_dir)
       @manager.install_to(tmp_dir)
-      
-      @fake_http.get_count.should == 1
+      @fake_http.get_count["http://www.google.com/index.html"].should == 1
     end
     
     it "should let you get resource file names for a plugin" do
       @manager.install_to(tmp_dir)
-      @manager.resource_dir(@manager.loaded_plugins.first).should == tmp_dir + "/core"
+      @manager.resource_dir(@manager.loaded_plugins.detect{|pl| pl.name == "Core"}).should == tmp_dir + "/core"
+    end
+    
+    it "should let you specify resources with a resource prefix (an asset_host)" do
+      @manager.install_to(tmp_dir)
+      prefixed_resource_path = tmp_dir + "/with-prefix/google.html"
+      File.exist?(prefixed_resource_path).should be_true
     end
   end
 

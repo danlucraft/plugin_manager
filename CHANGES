@@ -1,0 +1,8 @@
+
+
+Version 1.2 (4 September 2010)
+==============================
+
+Enhancements:
+
+ * Plugins can define resources to be downloaded on installation.

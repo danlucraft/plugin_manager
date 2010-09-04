@@ -27,8 +27,14 @@ class PluginManager
       @definition.file = values
     end
     
-    def install(resources)
-      @definition.resources = resources
+    def install(arg1, arg2=nil)
+      if arg2
+        prefix = arg1
+        hash   = Hash[arg2.map {|k, v| [prefix + k, v]}]
+      else
+        hash = arg1
+      end
+      @definition.resources.merge!(hash)
     end
     
     def dependencies(*deps)
