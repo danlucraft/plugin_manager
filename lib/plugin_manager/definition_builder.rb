@@ -27,12 +27,20 @@ class PluginManager
       @definition.file = values
     end
     
-    def install(arg1, arg2=nil)
-      if arg2
-        prefix = arg1
-        hash   = Hash[arg2.map {|k, v| [prefix + k, v]}]
-      else
-        hash = arg1
+    def install(*args)
+      if args.length == 1
+        if Hash === args.first
+          hash = args.first
+        else
+          hash = { args.first => File.basename(args.first) }
+        end
+      elsif args.length == 2
+        prefix = args.first
+        if Hash === args[1]
+          hash   = Hash[args[1].map {|k, v| [prefix + k, v]}]
+        elsif Array === args[1]
+          hash = Hash[args[1].map {|path| [prefix + path, File.basename(path) ] } ]
+        end
       end
       @definition.resources.merge!(hash)
     end

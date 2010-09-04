@@ -55,16 +55,44 @@ describe PluginManager::ResourceInstaller do
       @manager.install_to(tmp_dir)
       @manager.resource_dir(@manager.loaded_plugins.detect{|pl| pl.name == "Core"}).should == tmp_dir + "/core"
     end
+  end
+    
+  context "valid resource with a prefix" do
+    before do
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures resource_installer with-prefix)))
+      @manager.load
+    end
     
     it "should let you specify resources with a resource prefix (an asset_host)" do
       @manager.install_to(tmp_dir)
       File.exist?(tmp_dir + "/with-prefix/google.html").should be_true
     end
-    
+  end
+  
+  context "multiple install commands" do
+    before do
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures resource_installer multiple-installs)))
+      @manager.load
+    end
+
     it "should let you specify multiple resources to install" do
       @manager.install_to(tmp_dir)
       File.exist?(tmp_dir + "/multiple-installs/google-ca.html").should be_true
       File.exist?(tmp_dir + "/multiple-installs/google-uk.html").should be_true
+    end
+  end
+  
+  context "implied filenames" do
+    before do
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures resource_installer implied-filenames)))
+      @manager.load
+    end
+    
+    it "should use implied filenames where necessary" do
+      @manager.install_to(tmp_dir)
+      File.exist?(tmp_dir + "/implied-filenames/foo").should be_true
+      File.exist?(tmp_dir + "/implied-filenames/bar").should be_true
+      File.exist?(tmp_dir + "/implied-filenames/baz").should be_true
     end
   end
 
