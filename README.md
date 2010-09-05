@@ -54,6 +54,9 @@ The code in the appropriate plugins will be loaded and you will then have availa
     # plugins that raised exceptions while being loaded
     manager.plugins_with_errors
 
+NB. There is a BIG difference between this and say, Rubygems, in that plugin_manager will ONLY EVER
+LOAD THE MOST RECENT VERSION OF A PLUGIN. Older versions essentially DON'T EXIST from the point of view
+of the plugin_manager.
 
 License
 =======

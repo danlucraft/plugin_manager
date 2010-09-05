@@ -145,15 +145,53 @@ describe PluginManager do
     before do
       @manager = PluginManager.new
       @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading two_versions2)))
-      @manager.load
     end
      
-    it "should only load one version" do
+    it "should not load the plugin" do
+      @manager.load
+      @manager.loaded_plugins.length.should == 0
+    end
+  end
+  
+  describe "specify which plugin to load and load only that and it's dependencies" do
+    before do
+      @manager = PluginManager.new
+      @manager.add_plugin_source(File.join(File.dirname(__FILE__), %w(fixtures plugin_loading example)))
+    end
+     
+    it "should only load one plugin if that's right" do
+      @manager.load("Core")
       @manager.loaded_plugins.length.should == 1
+      @manager.loaded_plugins.first.name.should == "Core"
     end
     
-    it "should load the most recent version with met dependencies" do
-      @manager.loaded_plugins.first.version.should == "1.0"
+    it "should load dependencies of the specified plugin" do
+      @manager.load("Extras")
+      @manager.loaded_plugins.length.should == 2
+      @manager.loaded_plugins.map {|pl| pl.name }.sort.should == ["Core", "Extras"]
+    end
+
+    it "should load dependencies of dependencies" do
+      @manager.load("Debug")
+      @manager.loaded_plugins.length.should == 3
+      @manager.loaded_plugins.map {|pl| pl.name }.sort.should == ["Core", "Debug", "Extras"]
+    end
+    
+    it "should let you specify multiple plugins to load" do
+      @manager.load("Core", "Debug")
+      @manager.loaded_plugins.length.should == 3
+      @manager.loaded_plugins.map {|pl| pl.name }.sort.should == ["Core", "Debug", "Extras"]
+    end
+    
+    it "should let you load more after loading the first batch" do
+      @manager.load("Core")
+      @manager.load("Debug")
+      @manager.loaded_plugins.length.should == 3
+      @manager.loaded_plugins.map {|pl| pl.name }.sort.should == ["Core", "Debug", "Extras"]
+    end
+    
+    it "should raise an error if you try to load a plugin that doesn't exist" do
+      lambda { @manager.load("AFOSIJ") }.should raise_error
     end
   end
     

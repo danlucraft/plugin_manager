@@ -48,7 +48,7 @@ class PluginManager
     def dependencies(*deps)
       @definition.dependencies ||= []
       deps.each_slice(2) do |name, ver|
-        @definition.dependencies << [name, ver]
+        @definition.dependencies << PluginManager::Dependency.new(PluginManager.current, name, ver)
       end
     end
   end

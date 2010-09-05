@@ -5,12 +5,11 @@ class PluginManager
                   :version,
                   :object_string,
                   :file,
-                  :dependencies,
                   :definition_file,
                   :resources
                   
     def inspect1              
-      "<Plugin #{name} #{version} depends:[#{(dependencies||[]).map{|dep| dep.join("")}.join(", ")}] #{required_files.length} files>"
+      "<Plugin #{name} #{version} depends:#{dependencies.inspect} #{required_files.length} files>"
     end
     
     def inspect
@@ -23,6 +22,10 @@ class PluginManager
     
     def required_files
       @required_files ||= []
+    end
+    
+    def dependencies
+      @dependencies ||= []
     end
     
     def load_time
