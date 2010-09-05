@@ -21,6 +21,10 @@ class PluginManager
     @output = output
   end
 
+  def on_load(&block)
+    @load_observer = block
+  end
+  
   def plugins
     @plugins
   end
@@ -112,10 +116,19 @@ class PluginManager
     end
   end
   
+  def latest_version_by_name(name)
+    @plugins.select {|pl| pl.name == name }.sort_by {|pl| pl.version }.last
+  end
+  
+  private
+  
   def load_plugin(plugin)
     begin
       @output.puts "[PluginManager] loading #{plugin.name}" if ENV["PLUGIN_DEBUG"]
       plugin.load
+      if @load_observer
+        @load_observer.call(plugin)
+      end
       @loaded_plugins << plugin
     rescue Object => e
       @output.puts "Error loading plugin: #{plugin.inspect}"
@@ -130,10 +143,6 @@ class PluginManager
     while ready_plugin = @unloaded_plugins.detect {|pl| pl.dependencies.all? {|dep| dep.satisfied? }}
       load_plugin(ready_plugin)
     end
-  end
-  
-  def latest_version_by_name(name)
-    @plugins.select {|pl| pl.name == name }.sort_by {|pl| pl.version }.last
   end
   
   def expand_dependencies(dependency_array)
@@ -151,9 +160,7 @@ class PluginManager
       new_dependency_array
     end
   end
-  
-  private
-  
+
   def next_to_load(dependency_array)
     hash = Hash.new {|h,k| h[k] = []}
     dependency_array.each {|dep| hash[dep.required_name] << dep.required_version}
