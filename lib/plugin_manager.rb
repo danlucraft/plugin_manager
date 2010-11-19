@@ -120,8 +120,6 @@ class PluginManager
     @plugins.select {|pl| pl.name == name }.sort_by {|pl| pl.version }.last
   end
   
-  private
-  
   def load_plugin(plugin)
     begin
       @output.puts "[PluginManager] loading #{plugin.name}" if ENV["PLUGIN_DEBUG"]
