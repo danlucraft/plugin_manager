@@ -141,6 +141,7 @@ class PluginManager
     while ready_plugin = @unloaded_plugins.detect {|pl| pl.dependencies.all? {|dep| dep.satisfied? }}
       load_plugin(ready_plugin)
     end
+    @load_observer = nil # After loading all possible plugins, remove the load observer
   end
   
   def expand_dependencies(dependency_array)
