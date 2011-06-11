@@ -58,9 +58,33 @@ class PluginManager
     end
   end
   
+  def add_gem_plugin_source
+    gem_names          = Gem::SourceIndex.from_installed_gems.map {|n, _| n}
+    redcar_plugin_gems = gem_names.select {|n| n =~ /^redcar-/}
+    p gem_names
+    if redcar_plugin_gems.any?
+      @output.puts "[PluginManager] found gem plugins #{redcar_plugin_gems.inspect}" if ENV["PLUGIN_DEBUG"]
+    end
+    
+    definition_files = redcar_plugin_gems.map do |gem_name|
+      ENV["GEM_HOME"] + "/gems/" + gem_name + "/plugin.rb"
+    end
+    
+    definition_files = definition_files.select do |definition_file|
+      File.exist?(definition_file)
+    end
+    
+    add_definition_files(definition_files.compact)
+  end
+  
   def add_plugin_source(directory)
     definition_files = Dir[File.join(File.expand_path(directory), "*", "plugin.rb")]
     definition_files.reject! {|f| plugins.any? {|pl| pl.definition_file == File.expand_path(f) } }
+    
+    add_definition_files(definition_files)
+  end
+  
+  def add_definition_files(definition_files)
     definition_files.each do |file|
       begin
         PluginManager.current = self
