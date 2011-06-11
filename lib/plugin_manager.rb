@@ -61,7 +61,7 @@ class PluginManager
   def add_gem_plugin_source
     gem_names          = Gem::SourceIndex.from_installed_gems.map {|n, _| n}
     redcar_plugin_gems = gem_names.select {|n| n =~ /^redcar-/}
-    p gem_names
+    
     if redcar_plugin_gems.any?
       @output.puts "[PluginManager] found gem plugins #{redcar_plugin_gems.inspect}" if ENV["PLUGIN_DEBUG"]
     end
