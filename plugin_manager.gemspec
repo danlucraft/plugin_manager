@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files  = %w(README.md)
   s.rdoc_options      = %w(--main README.md)
 
-  s.files             = %w(README.md) + Dir.glob("{bin,spec,lib/**/*}")
-  s.executables       = FileList["bin/**"].map { |f| File.basename(f) }
+  s.files             = %w(README.md Rakefile) + Dir.glob("{spec,lib/**/*}")
+  s.executables       = []
   s.require_paths     = ["lib"]
 
   s.add_development_dependency("rspec")

@@ -1,3 +1,5 @@
 pkg
 rdoc
 .redcar
+.DS_store
+*.gem
