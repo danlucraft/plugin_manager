@@ -63,7 +63,7 @@ class PluginManager
     redcar_plugin_gem_names = all_gem_names.select {|n| n =~ /^redcar-/}
     
     definition_files = redcar_plugin_gem_names.map do |gem_name|
-      [gem_name, ENV["GEM_HOME"] + "/gems/" + gem_name + "/plugin.rb"]
+      [gem_name, Gem.source_index.specification(gem_name).full_gem_path + "/plugin.rb"]
     end
 
     definition_files = definition_files.select do |name, definition_file|
