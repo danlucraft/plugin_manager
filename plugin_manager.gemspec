@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |s|
   s.name              = "plugin_manager"
-  s.version           = "1.3"
+  s.version           = "1.4"
   s.summary           = "A Ruby plugin loader"
   s.author            = "Daniel Lucraft"
   s.email             = "dan@fluentradical.com"
