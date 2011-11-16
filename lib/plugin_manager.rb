@@ -128,7 +128,7 @@ class PluginManager
         Dependency.new(self, n, ">0")
       end
     end
-    remaining_to_load = expand_dependencies(target_dependencies)
+    remaining_to_load = remove_already_loaded_dependencies(expand_dependencies(target_dependencies))
     while remaining_to_load.length > 0
       previous_length = remaining_to_load.length
       if plugin = next_to_load(remaining_to_load)
@@ -176,13 +176,19 @@ class PluginManager
       if pl = latest_version_by_name(dep.required_name)
         [dep, pl.dependencies]
       else
-        dep
+        raise "couldn't find a plugin called #{dep.required_name}"
       end
-    end.flatten.uniq
+    end.flatten.compact.uniq
     if new_dependency_array.length > previous_length
       expand_dependencies(new_dependency_array)
     else
       new_dependency_array
+    end
+  end
+  
+  def remove_already_loaded_dependencies(dependency_array)
+    dependency_array.reject do |dep| 
+      loaded_plugins.map(&:name).include?(dep.required_name)
     end
   end
 
