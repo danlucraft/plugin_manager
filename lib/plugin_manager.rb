@@ -8,6 +8,13 @@ require 'plugin_manager/definition_builder'
 class PluginManager
   attr_reader :unreadable_definitions, :plugins_with_errors, :loaded_plugins, :unloaded_plugins, :output
 
+  # A list of plugins that should not be loaded. You can feel free to assign
+  # plugins that are dependencies of plugins that are not disabled. In that
+  # case the plugin manager will just ignore your request to disable the
+  # plugin. This ensures that you only disable plugins in such a way that it is
+  # stable to the system.
+  attr_writer :disabled_plugins
+
   class << self
     attr_accessor :current
   end
@@ -18,6 +25,7 @@ class PluginManager
     @loaded_plugins         = []
     @unreadable_definitions = []
     @plugins_with_errors    = []
+    @disabled_plugins       = []
     @output = output
   end
 
@@ -27,6 +35,21 @@ class PluginManager
   
   def plugins
     @plugins
+  end
+
+  # A subset of the plugins that have been requested to be disabled.
+  def disabled_plugins
+    plugins.find_all do |pd|
+      @disabled_plugins.include?(pd.name) &&
+      derivative_plugins_for(pd).all? {|der| @disabled_plugins.include? der.name}
+    end
+  end
+
+  # Returns all plugins that are dependent on the given plugin
+  def derivative_plugins_for(plugin)
+    plugins.find_all do |pd|
+      pd.dependencies.any? {|dep| dep.required_name == plugin.name}
+    end
   end
   
   def plugin_objects
@@ -118,6 +141,10 @@ class PluginManager
   end
   
   def load(*plugin_names)
+    # Make sure disabled plugins are not listed as unloaded so we don't
+    # try to load them.
+    @unloaded_plugins -= disabled_plugins
+
     if plugin_names.empty?
       return load_maximal
     else
